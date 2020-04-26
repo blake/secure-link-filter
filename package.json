@@ -1,0 +1,24 @@
+{
+  "author": {
+    "name": "Blake Covarrubias",
+    "email": "blake@covarrubi.as",
+    "url": "https://blakecovarrubias.com/"
+  },
+  "homepage": "https://github.com/blake/secure-link-filter#README",
+  "license": "MIT",
+  "repository": "github:blake/secure-link-filter",
+  "scripts": {
+    "asbuild:untouched": "asc assembly/index.ts -b build/untouched.wasm --use abort=abort_proc_exit -t build/untouched.wat --validate --sourceMap --debug",
+    "asbuild:optimized": "asc assembly/index.ts -b build/optimized.wasm --use abort=abort_proc_exit -t build/optimized.wat --validate --sourceMap --optimize",
+    "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized",
+    "test": "node tests"
+  },
+  "dependencies": {
+    "as-crypto": "^0.0.4",
+    "@assemblyscript/loader": "0.9.1",
+    "@solo-io/proxy-runtime": "0.1.1"
+  },
+  "devDependencies": {
+    "assemblyscript": "0.9.1"
+  }
+}
