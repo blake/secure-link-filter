@@ -14,7 +14,7 @@ import { GrpcStatusValues, send_local_response } from "@solo-io/proxy-runtime/ru
 import * as md5 from "../node_modules/as-crypto/lib/md5";
 
 class SecureLinkRoot extends RootContext {
-  configuration : string;
+  configuration: string;
 
   /* This function is called when Envoy loads the WASM module if the configuration
   has not already been loaded into the VM running the module.
@@ -27,7 +27,7 @@ class SecureLinkRoot extends RootContext {
     let result = String.UTF8.decode(conf_buffer);
     this.configuration = result;
 
-    // Return to the VM to the filter has properly initialized
+    // Signal to the Wasm VM that the filter has properly initialized
     return true;
   }
 
@@ -39,7 +39,7 @@ class SecureLinkRoot extends RootContext {
 }
 
 class SecureLink extends Context {
-  root_context : SecureLinkRoot;
+  root_context: SecureLinkRoot;
 
   // List of protected URL paths
   private _protected_paths: Array<string>;
@@ -113,7 +113,7 @@ class SecureLink extends Context {
     // Check if URL matches one of our secured paths
     for (let index = 0; index < this._protected_paths.length; index++) {
       const element = this._protected_paths[index];
-      if (isString(element) && path.includes(element)) {
+      if (isString(element) && path.startsWith(element)) {
         path_obj.set("prefix", element);
         break;
       }
