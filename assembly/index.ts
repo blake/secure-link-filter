@@ -142,10 +142,10 @@ class SecureLink extends Context {
     return path_obj;
   }
 
-  // Reject request with 403, and stop filter chain processing
+  // Reject request with 401, and stop filter chain processing
   private rejectRequest(): FilterHeadersStatusValues {
     // Allocate a buffer for the body to return in the request
-    const buffer = new ArrayBuffer(8);
+    const buffer = String.UTF8.encode('Unauthorized');
 
     /*
     Sends HTTP response without forwarding request to the upstream.
@@ -154,9 +154,9 @@ class SecureLink extends Context {
     */
     send_local_response(
       // Response code
-      403,
+      401,
       // Response code details
-      "Forbidden",
+      "Unauthorized",
       // Body
       buffer,
       // Additional headers
