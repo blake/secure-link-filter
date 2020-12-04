@@ -1,11 +1,9 @@
 export * from "@solo-io/proxy-runtime/proxy";
 import {
   Context,
-  ContextHelper,
   FilterHeadersStatusValues,
   registerRootContext,
   RootContext,
-  RootContextHelper,
   stream_context,
 } from "@solo-io/proxy-runtime";
 
@@ -14,27 +12,10 @@ import { GrpcStatusValues, send_local_response } from "@solo-io/proxy-runtime/ru
 import * as md5 from "../node_modules/as-crypto/lib/md5";
 
 class SecureLinkRoot extends RootContext {
-  configuration: string;
-
-  /* This function is called when Envoy loads the WASM module if the configuration
-  has not already been loaded into the VM running the module.
-
-  This method can only be called in the root context.
-  https://github.com/proxy-wasm/proxy-wasm-cpp-sdk/blob/master/docs/wasm_filter.md#onconfigure
-  */
-  onConfigure(): bool {
-    let conf_buffer = super.getConfiguration();
-    let result = String.UTF8.decode(conf_buffer);
-    this.configuration = result;
-
-    // Signal to the Wasm VM that the filter has properly initialized
-    return true;
-  }
-
   // Called at the beginning of filter chain iteration.
   // Indicates creation of the new stream context.
-  createContext(): Context {
-    return ContextHelper.wrap(new SecureLink(this));
+  createContext(context_id: u32): Context {
+    return new SecureLink(context_id, this);
   }
 }
 
@@ -47,10 +28,8 @@ class SecureLink extends Context {
   // Secure Link secret
   private _secure_link_secret: string;
 
-  constructor(root_context:SecureLinkRoot){
-    super();
-    // Associates the parent root context with this stream context
-    this.root_context = root_context;
+  constructor(context_id: u32, root_context:SecureLinkRoot){
+    super(context_id, root_context);
 
     // Parse defined configuration
     this.parseConfiguration();
@@ -227,7 +206,7 @@ class SecureLink extends Context {
 }
 
 registerRootContext(
-  () => { return RootContextHelper.wrap(new SecureLinkRoot()); },
+  (context_id: u32) => { return new SecureLinkRoot(context_id); },
 
   // root_id: The name of our filter
   // This name is referenced in the Envoy configuration.

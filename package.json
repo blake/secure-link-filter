@@ -14,11 +14,11 @@
     "test": "node tests"
   },
   "dependencies": {
-    "as-crypto": "^0.0.4",
-    "@assemblyscript/loader": "0.9.1",
-    "@solo-io/proxy-runtime": "0.1.1"
+    "@assemblyscript/loader": "^0.9.1",
+    "@solo-io/proxy-runtime": "0.1.8",
+    "as-crypto": "^0.0.4"
   },
   "devDependencies": {
-    "assemblyscript": "0.9.1"
+    "assemblyscript": "^0.9.1"
   }
 }
